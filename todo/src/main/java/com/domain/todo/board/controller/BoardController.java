@@ -7,19 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-//todo
-/*
-getTodoList()       // 목록   완료
-getTodoListCnt()    // 개수   완료
-getTodoDetail()     // 상세   완료
-insertTodo()        // 등록   완료
-updateTodo()        // 수정   완료
-deleteTodo()        // 삭제   완료
-⭐ updateTodoStatus()  // 완료/미완료 토글 (자주 씀!)
-viewCnt() // 조회수
-test
-*/
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
@@ -27,14 +14,28 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/getTodoList")
-    /*public Map<String, Object> getTodoList(@RequestParam Map<String,Object> param) {
-        return boardService.getTodoList(param);
-    }*/
-    public Map<String, Object> getTodoList( @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("offset", (page - 1) * pageSize);
-        param.put("pageSize", pageSize);
-        return boardService.getTodoList(param);
+    public Map<String, Object> getTodoList(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize,
+                                           @RequestParam(required = false) String search, @RequestParam(required = false) Integer status) {
+        Map<String, Object> param = new HashMap<>(Map.of(
+                "offset", (page - 1) * pageSize,
+                "pageSize", pageSize
+        ));
+
+        if (search != null && !search.trim().isEmpty()) {
+            param.put("search", search.trim());
+        }
+        if (status != null) {
+            param.put("status", status);
+        }
+
+        Map<String, Object> result = boardService.getTodoList(param);
+
+        result.putAll(Map.of(
+                "currentPage", page,
+                "totalCnt", boardService.getTodoListCnt(param),
+                "totalPages", (int) Math.ceil((double) boardService.getTodoListCnt(param) / pageSize)
+        ));
+        return result;
     }
 
     @GetMapping("/todos/{todoId}")
@@ -57,7 +58,6 @@ public class BoardController {
     public Map<String, Object> updateTodoStatus(@PathVariable int todoId) {
         Map<String, Object> todo = boardService.getTodoDetail(todoId);
 
-        // Boolean이든 Integer든 0/1로 통일
         int currentStatus = todo.get("STATUS") == Boolean.TRUE ? 1 : 0;
         int newStatus = currentStatus == 1 ? 0 : 1;
 
@@ -69,6 +69,5 @@ public class BoardController {
     public Map<String, Object> deleteTodo(@PathVariable int todoId) {
         return boardService.deleteTodo(todoId);
     }
-
 
 }

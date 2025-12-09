@@ -13,7 +13,7 @@ public interface BoardMapper {
 
     Map<String, Object> getTodoDetail(int todoId);
 
-    void addTodo(Map<String, Object> param);
+    int addTodo(Map<String, Object> param);
 
     int updateTodo(Map<String, Object> param);
 

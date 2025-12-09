@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ExceptionCode {
     // 400 Bad Request
-    INVALID_TITLE(HttpStatus.BAD_REQUEST, "TITLE001", "제목은 필수입니다."),
-    TITLE_TOO_LONG(HttpStatus.BAD_REQUEST, "TITLE002", "제목은 200자 이하로 작성해주세요."),
+    INVALID_CONTENT(HttpStatus.BAD_REQUEST, "CONTENT001", "할일 입력은 필수입니다."),
+    CONTENT_TOO_LONG(HttpStatus.BAD_REQUEST, "TITLE002", "255자 이하로 작성해주세요."),
 
     // 404 Not Found
     TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO001", "존재하지 않는 할일입니다."),

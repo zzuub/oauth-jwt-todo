@@ -2,62 +2,66 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.domain.todo.board.mapper.BoardMapper">
-    <select id="getTodoList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+
+    <select id="getTodoList" parameterType="map" resultType="map">
         SELECT
-            TODO_ID,
-            TITLE,
-            CONTENT,
-            DATE_FORMAT(REGIST_DATE, '%Y-%m-%d') AS registDate,
-            VIEW_COUNT,
-            STATUS
+        TODO_ID,
+        CONTENT,
+        DATE_FORMAT(REGIST_DATE, '%Y-%m-%d') AS registDate,
+        STATUS
         FROM BOARD
-        ORDER BY REGIST_DATE DESC
+        <where>
+            <if test="search != null and search != ''">
+                AND CONTENT LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="status != null">
+                AND STATUS = #{status}
+            </if>
+        </where>
+        ORDER BY
+        CASE WHEN STATUS = 0 THEN 0 ELSE 1 END,
+        REGIST_DATE DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="getTodoListCnt" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM BOARD
+        <where>
+            <if test="search != null and search != ''">
+                AND CONTENT LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="status != null">
+                AND STATUS = #{status}
+            </if>
+        </where>
     </select>
 
     <select id="getTodoDetail" parameterType="int" resultType="map">
         SELECT
             TODO_ID,
-            TITLE,
             CONTENT,
             DATE_FORMAT(REGIST_DATE, '%Y-%m-%d') AS registDate,
-            VIEW_COUNT,
             STATUS
         FROM BOARD
         WHERE TODO_ID = #{todoId}
     </select>
 
-   <!-- <update id="increaseViewCount" parameterType="int">
-        UPDATE BOARD
-        SET VIEW_COUNT = VIEW_COUNT + 1
-        WHERE TODO_ID = #{todoId}
-    </update>-->
-
     <insert id="addTodo" parameterType="map" useGeneratedKeys="true" keyProperty="todoId">
         INSERT INTO BOARD (
-            TITLE,
             CONTENT,
-            VIEW_COUNT,
+            STATUS,
             REGIST_DATE
         ) VALUES (
-            #{title},
             #{content},
-            COALESCE(#{viewCount}, 0),
+            COALESCE(#{status}, 0),
             #{registDate, jdbcType=TIMESTAMP}
         )
     </insert>
 
     <update id="updateTodo" parameterType="map">
         UPDATE BOARD
-        SET
-            TITLE = #{title},
-            CONTENT = #{content},
-            VIEW_COUNT = COALESCE(#{viewCount}, VIEW_COUNT)
+        SET CONTENT = #{content}
         WHERE TODO_ID = #{todoId}
     </update>
 
@@ -71,7 +75,5 @@
         DELETE FROM BOARD
         WHERE TODO_ID = #{todoId}
     </delete>
-
-
 
 </mapper>

@@ -33,7 +33,11 @@ public class BoardService {
     public Map<String, Object> addTodo(Map<String, Object> param) {
         validateTodoParam(param);
         param.put("registDate", LocalDateTime.now());
-        boardMapper.addTodo(param);
+
+        int result = boardMapper.addTodo(param);
+        if (result == 0) {
+            throw new ApiException(ExceptionCode.UPDATE_FAILED);
+        }
         return param;
     }
 
@@ -49,19 +53,28 @@ public class BoardService {
         int todoId = (Integer) param.get("todoId");
         int status = (Integer) param.get("status");
 
-        getTodoOrThrow(todoId);  // 존재 확인
+        getTodoOrThrow(todoId);
 
         Map<String, Object> updateParam = new HashMap<>();
         updateParam.put("todoId", todoId);
         updateParam.put("status", status);
 
-        boardMapper.updateTodoStatus(updateParam);
+        int result = boardMapper.updateTodoStatus(updateParam);
+        if (result == 0) {
+            throw new ApiException(ExceptionCode.UPDATE_FAILED);
+        }
+
         return Map.of("todoId", todoId, "status", status);
     }
 
     public Map<String, Object> deleteTodo(int todoId) {
         getTodoOrThrow(todoId);
-        boardMapper.deleteTodo(todoId);
+
+        int result = boardMapper.deleteTodo(todoId);
+        if (result == 0) {
+            throw new ApiException(ExceptionCode.DELETE_FAILED);
+        }
+
         return Map.of("todoId", todoId);
     }
 
@@ -74,13 +87,25 @@ public class BoardService {
     }
 
     private void validateTodoParam(Map<String, Object> param) {
-        String title = (String) param.get("title");
-        if (title == null || title.trim().isEmpty()) {
-            throw new ApiException(ExceptionCode.INVALID_TITLE);
+        String content = (String) param.get("content");
+        if (content == null || content.trim().isEmpty()) {
+            throw new ApiException(ExceptionCode.INVALID_CONTENT);
         }
-        if (title.length() > 200) {
-            throw new ApiException(ExceptionCode.TITLE_TOO_LONG);
+        if (content.length() > 1000) {
+            throw new ApiException(ExceptionCode.CONTENT_TOO_LONG);
         }
+    }
+
+    public int getTotalCount() {
+        return boardMapper.getTodoListCnt(Map.of());
+    }
+
+    public int getTotalPages(int pageSize) {
+        return (int) Math.ceil((double) getTotalCount() / pageSize);
+    }
+
+    public int getTodoListCnt(Map<String, Object> param) {
+        return boardMapper.getTodoListCnt(param);
     }
 
 }
