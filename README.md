@@ -20,6 +20,9 @@ RMS 실습 1차 과제
 ## ERD
 <img width="831" height="256" alt="Image" src="https://github.com/user-attachments/assets/f6fdd291-be70-4ced-beae-e34f3ec155c7" />
 
+## SWAGGER
+<img width="1823" height="519" alt="Image" src="https://github.com/user-attachments/assets/91b17255-8e95-49d5-a5f8-1a47ebd78813" />
+
 ## 트러블 슈팅
 1. properties에서 DB 정보를 못 읽는 이슈
 > DataBaseConfig 파일 생성 (추가예정)
