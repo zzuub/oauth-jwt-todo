@@ -55,20 +55,20 @@ public class BoardService {
 
     public Map<String, Object> updateTodoStatus(Map<String, Object> param) {
         int todoId = (Integer) param.get("todoId");
-        int status = (Integer) param.get("status");
+        int statusYn = (Integer) param.get("statusYn");
 
         getTodoOrThrow(todoId);
 
         Map<String, Object> updateParam = new HashMap<>();
         updateParam.put("todoId", todoId);
-        updateParam.put("status", status);
+        updateParam.put("statusYn", statusYn);
 
         int result = boardMapper.updateTodoStatus(updateParam);
         if (result == 0) {
             throw new ApiException(ExceptionCode.UPDATE_FAILED);
         }
 
-        return Map.of("todoId", todoId, "status", status);
+        return Map.of("todoId", todoId, "statusYn", statusYn);
     }
 
     public Map<String, Object> deleteTodo(int todoId) {

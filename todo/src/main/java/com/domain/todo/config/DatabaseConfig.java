@@ -17,13 +17,13 @@ public class DatabaseConfig {
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
 
-        // Mapper XML 위치 설정
+        //Mapper XML 위치 설정
         sessionFactory.setMapperLocations(
                 new PathMatchingResourcePatternResolver()
                         .getResources("classpath:mapper/**/*.xml")
         );
 
-        // 카멜케이스 변환 설정
+        //카멜케이스 변환 설정
         org.apache.ibatis.session.Configuration configuration =
                 new org.apache.ibatis.session.Configuration();
         configuration.setMapUnderscoreToCamelCase(true);

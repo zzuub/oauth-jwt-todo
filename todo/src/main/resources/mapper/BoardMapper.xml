@@ -8,19 +8,22 @@
         TODO_ID,
         CONTENT,
         DATE_FORMAT(REGIST_DATE, '%Y-%m-%d') AS registDate,
-        CASE WHEN STATUS = 'Y' THEN 1 WHEN STATUS = 'N' THEN 0 ELSE 0 END AS STATUS
+        CASE WHEN STATUS_YN = 'Y' THEN 1
+        WHEN STATUS_YN = 'N' THEN 0
+        ELSE 0
+        END AS STATUS_YN
         FROM BOARD
-        WHERE DELETE_FLAG = 'N'
         <where>
+            DELETE_FLAG_YN = 'N'
             <if test="search != null and search != ''">
                 AND CONTENT LIKE CONCAT('%', #{search}, '%')
             </if>
-            <if test="status != null">
-                AND STATUS = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
+            <if test="STATUS_YN != null">
+                AND STATUS_YN = CASE WHEN #{STATUS_YN} = 1 THEN 'Y' ELSE 'N' END
             </if>
         </where>
         ORDER BY
-        CASE WHEN STATUS = 'N' THEN 0 ELSE 1 END,
+        CASE WHEN STATUS_YN = 'N' THEN 0 ELSE 1 END,
         REGIST_DATE DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
@@ -28,13 +31,13 @@
     <select id="getTodoListCnt" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM BOARD
-        WHERE DELETE_FLAG = 'N'
         <where>
+            DELETE_FLAG_YN = 'N'
             <if test="search != null and search != ''">
                 AND CONTENT LIKE CONCAT('%', #{search}, '%')
             </if>
-            <if test="status != null">
-                AND STATUS = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
+            <if test="STATUS_YN != null">
+                AND STATUS_YN = CASE WHEN #{STATUS_YN} = 1 THEN 'Y' ELSE 'N' END
             </if>
         </where>
     </select>
@@ -44,35 +47,35 @@
             TODO_ID,
             CONTENT,
             DATE_FORMAT(REGIST_DATE, '%Y-%m-%d') AS registDate,
-            CASE WHEN STATUS = 'Y' THEN 1 WHEN STATUS = 'N' THEN 0 ELSE 0 END AS STATUS
+            CASE WHEN STATUS_YN = 'Y' THEN 1 WHEN STATUS_YN = 'N' THEN 0 ELSE 0 END AS STATUS_YN
         FROM BOARD
-        WHERE TODO_ID = #{todoId} AND DELETE_FLAG = 'N'
+        WHERE TODO_ID = #{todoId} AND DELETE_FLAG_YN = 'N'
     </select>
 
     <insert id="addTodo" parameterType="map" useGeneratedKeys="true" keyProperty="todoId">
-        INSERT INTO BOARD (CONTENT, STATUS, REGIST_DATE)
+        INSERT INTO BOARD (CONTENT, STATUS_YN, REGIST_DATE)
         VALUES (#{content},
-                CASE WHEN #{status} = 1 THEN 'Y' WHEN #{status} = 0 THEN 'N' ELSE 'N' END,
+                CASE WHEN #{STATUS_YN} = 1 THEN 'Y' WHEN #{STATUS_YN} = 0 THEN 'N' ELSE 'N' END,
                 #{registDate, jdbcType=TIMESTAMP})
     </insert>
 
     <update id="updateTodo" parameterType="map">
         UPDATE BOARD
         SET CONTENT = #{content},
-        STATUS = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
+        STATUS_YN = CASE WHEN #{STATUS_YN} = 1 THEN 'Y' ELSE 'N' END
         WHERE TODO_ID = #{todoId}
     </update>
 
-    <update id="updateTodoStatus" parameterType="map">
+    <update id="updateTodoSTATUS_YN" parameterType="map">
         UPDATE BOARD
-        SET STATUS = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
+        SET STATUS_YN = CASE WHEN #{STATUS_YN} = 1 THEN 'Y' ELSE 'N' END
         WHERE TODO_ID = #{todoId}
     </update>
 
     <update id="deleteTodo" parameterType="int">
         UPDATE BOARD
-        SET DELETE_FLAG = 'Y'
-        WHERE TODO_ID = #{todoId} AND DELETE_FLAG = 'N'
+        SET DELETE_FLAG_YN = 'Y'
+        WHERE TODO_ID = #{todoId} AND DELETE_FLAG_YN = 'N'
     </update>
 
 </mapper>
