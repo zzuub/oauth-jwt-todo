@@ -29,18 +29,20 @@ h3 {
 }
 
 .add-list-button {
+    padding: 12px 15px;
+    border-radius: 25px;
+    font-size: 16px;
+    min-width: 120px;
+    min-height: auto;
     display: block;
-    padding: clamp(12px, 2vw, 15px) clamp(20px, 4vw, 30px);
     background: linear-gradient(135deg, #ffb74d 0%, #ff9800 100%);
     color: white;
     border: none;
-    border-radius: 25px;
-    font-size: clamp(14px, 2.5vw, 18px);
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
     transition: all 0.3s ease;
-    min-height: 55px;
 }
+
 
 .add-list-button:hover {
     background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);

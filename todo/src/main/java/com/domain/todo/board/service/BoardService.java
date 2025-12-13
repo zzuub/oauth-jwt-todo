@@ -18,7 +18,7 @@ public class BoardService {
     public Map<String, Object> getTodoList(Map<String,Object> param) {
         Map<String,Object> result = new HashMap<>();
         result.put("data", boardMapper.getTodoList(param));
-        result.put("todoCnt", boardMapper.getTodoListCnt(param));
+        //result.put("todoCnt", boardMapper.getTodoListCnt(param));
         return result;
     }
 
@@ -32,7 +32,6 @@ public class BoardService {
 
     public Map<String, Object> addTodo(Map<String, Object> param) {
         validateTodoParam(param);
-        param.put("registDate", LocalDateTime.now());
 
         int result = boardMapper.addTodo(param);
         if (result == 0) {
@@ -55,20 +54,20 @@ public class BoardService {
 
     public Map<String, Object> updateTodoStatus(Map<String, Object> param) {
         int todoId = (Integer) param.get("todoId");
-        int statusYn = (Integer) param.get("statusYn");
+        int status = (Integer) param.get("status");
 
         getTodoOrThrow(todoId);
 
         Map<String, Object> updateParam = new HashMap<>();
         updateParam.put("todoId", todoId);
-        updateParam.put("statusYn", statusYn);
+        updateParam.put("status", status);
 
         int result = boardMapper.updateTodoStatus(updateParam);
         if (result == 0) {
             throw new ApiException(ExceptionCode.UPDATE_FAILED);
         }
 
-        return Map.of("todoId", todoId, "statusYn", statusYn);
+        return Map.of("todoId", todoId, "status", status);
     }
 
     public Map<String, Object> deleteTodo(int todoId) {

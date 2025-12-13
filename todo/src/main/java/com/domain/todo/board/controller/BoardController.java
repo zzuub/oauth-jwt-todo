@@ -14,8 +14,10 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/getTodoList")
-    public Map<String, Object> getTodoList(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize,
-                                           @RequestParam(required = false) String search, @RequestParam(required = false) Integer status) {
+    public Map<String, Object> getTodoList(@RequestParam(defaultValue = "1") int page,
+                                           @RequestParam(defaultValue = "10") int pageSize,
+                                           @RequestParam(required = false) String search,
+                                           @RequestParam(required = false) Integer status) {
         Map<String, Object> param = new HashMap<>(Map.of(
                 "offset", (page - 1) * pageSize,
                 "pageSize", pageSize
@@ -29,11 +31,12 @@ public class BoardController {
         }
 
         Map<String, Object> result = boardService.getTodoList(param);
+        int totalCnt = boardService.getTodoListCnt(param);
 
         result.putAll(Map.of(
                 "currentPage", page,
                 "totalCnt", boardService.getTodoListCnt(param),
-                "totalPages", (int) Math.ceil((double) boardService.getTodoListCnt(param) / pageSize)
+                "totalPages", (int) Math.ceil((double) totalCnt / pageSize)
         ));
         return result;
     }
