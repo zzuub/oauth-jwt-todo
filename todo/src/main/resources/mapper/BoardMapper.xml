@@ -9,8 +9,8 @@
             CONTENT,
             DATE_FORMAT(REGIST_DATE, '%Y-%m-%d') AS registDate,
             CASE
-                WHEN STATUS_YN = 'Y' THEN 1
-                WHEN STATUS_YN = 'N' THEN 0
+                WHEN COMPLETED_YN = 'Y' THEN 1
+                WHEN COMPLETED_YN = 'N' THEN 0
                 ELSE 0
             END AS STATUS
         FROM BOARD
@@ -20,11 +20,11 @@
                 AND CONTENT LIKE CONCAT('%', #{search}, '%')
             </if>
             <if test="status != null">
-                AND STATUS_YN = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
+                AND COMPLETED_YN = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
             </if>
         </where>
         ORDER BY
-            CASE WHEN STATUS_YN = 'N' THEN 0 ELSE 1 END,
+            CASE WHEN COMPLETED_YN = 'N' THEN 0 ELSE 1 END,
             REGIST_DATE DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
@@ -38,7 +38,7 @@
                 AND CONTENT LIKE CONCAT('%', #{search}, '%')
             </if>
             <if test="status != null">
-                AND STATUS_YN = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
+                AND COMPLETED_YN = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
             </if>
         </where>
     </select>
@@ -49,8 +49,8 @@
             CONTENT,
             DATE_FORMAT(REGIST_DATE, '%Y-%m-%d') AS registDate,
             CASE
-                WHEN STATUS_YN = 'Y' THEN 1
-                WHEN STATUS_YN = 'N' THEN 0
+                WHEN COMPLETED_YN = 'Y' THEN 1
+                WHEN COMPLETED_YN = 'N' THEN 0
                 ELSE 0
             END AS STATUS
         FROM BOARD
@@ -61,7 +61,7 @@
     <insert id="addTodo" parameterType="map" useGeneratedKeys="true" keyProperty="todoId">
         INSERT INTO BOARD (
             CONTENT,
-            STATUS_YN
+            COMPLETED_YN
         )
         VALUES (
             #{content},
@@ -77,7 +77,7 @@
         UPDATE BOARD
         SET
             CONTENT = #{content},
-            STATUS_YN = CASE
+            COMPLETED_YN = CASE
                 WHEN #{status} = 1 THEN 'Y'
                 ELSE 'N'
             END
@@ -87,7 +87,7 @@
     <update id="updateTodoStatus" parameterType="map">
         UPDATE BOARD
         SET
-            STATUS_YN = CASE
+            COMPLETED_YN = CASE
                 WHEN #{status} = 1 THEN 'Y'
                 ELSE 'N'
             END
