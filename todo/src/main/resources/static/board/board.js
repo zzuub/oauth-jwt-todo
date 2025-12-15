@@ -55,9 +55,6 @@ function loadTodoLists(page = 1) {
 }
 
 function displayTodoLists(data) {
-    console.log('API data:', data);           // 전체 응답 확인
-    console.log('todos:', data.data);         // 새로 추가된 TODO_ID 있는지
-
     const todos = data.data || [];
     const container = document.getElementById('todoLists');
 
