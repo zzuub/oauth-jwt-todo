@@ -10,7 +10,7 @@
             DATE_FORMAT(regist_date, '%Y-%m-%d') AS registDate,
             CASE
                 WHEN completed_yn = 'Y' THEN 1
-                when completed_yn = 'n' then 0
+                WHEN completed_yn = 'n' THEN 0
                 ELSE 0
             END AS STATUS
         FROM board
@@ -20,12 +20,18 @@
                 AND content LIKE CONCAT('%', #{search}, '%')
             </if>
             <if test="status != null">
-                AND completed_yn = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
+                AND completed_yn =
+                CASE
+                    WHEN #{status} = 1 THEN 'Y'
+                    ELSE 'N'
+                END
             </if>
         </where>
         ORDER BY
-            CASE WHEN completed_yn = 'N' THEN 0 ELSE 1 END,
-            regist_date DESC
+            CASE
+                WHEN completed_yn = 'N' THEN 0
+                ELSE 1
+            END, regist_date DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
@@ -38,7 +44,11 @@
                 AND content LIKE CONCAT('%', #{search}, '%')
             </if>
             <if test="status != null">
-                AND completed_yn = CASE WHEN #{status} = 1 THEN 'Y' ELSE 'N' END
+                AND completed_yn =
+                CASE
+                    WHEN #{status} = 1 THEN 'Y'
+                    ELSE 'N'
+                END
             </if>
         </where>
     </select>
