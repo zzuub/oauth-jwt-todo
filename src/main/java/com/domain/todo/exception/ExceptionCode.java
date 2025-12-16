@@ -3,6 +3,7 @@ package com.domain.todo.exception;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+//private final 필드에 getter 자동생성, 코드 간결성을 위해
 @Getter
 public enum ExceptionCode {
     //400
@@ -27,6 +28,7 @@ public enum ExceptionCode {
     private final String message;
 
     ExceptionCode(HttpStatus status, String code, String message) {
+        //this.필드명 = 매개변수. 구분하기 위해 사용
         this.status = status;
         this.code = code;
         this.message = message;
