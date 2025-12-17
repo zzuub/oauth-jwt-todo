@@ -63,8 +63,9 @@ function displayTodoLists(data) {
         return;
     }
 
-    const ongoingTodos = todos.filter(todo => todo.STATUS == 0);
-    const completedTodos = todos.filter(todo => todo.STATUS == 1)
+    // completed_yn으로 필터링 (0: 진행중, 1: 완료)
+    const ongoingTodos = todos.filter(todo => todo.completed_yn == 0);
+    const completedTodos = todos.filter(todo => todo.completed_yn == 1)
         .sort((a, b) => new Date(b.registDate) - new Date(a.registDate));
     const sortedTodos = [...ongoingTodos, ...completedTodos];
 
@@ -100,18 +101,18 @@ function displayTodoLists(data) {
                     </thead>
                     <tbody>
                         ${sortedTodos.map(todo => `
-                            <tr class="todo-row ${todo.STATUS == 1 ? 'completed' : ''}">
-                                <td data-label="할 일" class="todo-name">${todo.CONTENT || '-'}</td>
+                            <tr class="todo-row ${todo.completed_yn == 1 ? 'completed' : ''}">
+                                <td data-label="할 일" class="todo-name">${todo.content || '-'}</td>
                                 <td data-label="작성일">${todo.registDate}</td>
-                                <td data-label="상태">${todo.STATUS == 1 ? '✅ 완료' : '⏳ 진행중'}</td>
+                                <td data-label="상태">${todo.completed_yn == 1 ? '✅ 완료' : '⏳ 진행중'}</td>
                                 <td data-label="작업" class="todo-actions">
-                                    <button class="done-btn" onclick="toggleTodo(${todo.TODO_ID})">
-                                        ${todo.STATUS == 1 ? '↩️ 취소' : '✅ 완료'}
+                                    <button class="done-btn" onclick="toggleTodo(${todo.todo_id})">
+                                        ${todo.completed_yn == 1 ? '↩️ 취소' : '✅ 완료'}
                                     </button>
-                                    <button class="edit-todo" onclick="editTodo(${todo.TODO_ID}, ${currentPage})">
+                                    <button class="edit-todo" onclick="editTodo(${todo.todo_id}, ${currentPage})">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="delete-todo" onclick="deleteTodo(${todo.TODO_ID})">
+                                    <button class="delete-todo" onclick="deleteTodo(${todo.todo_id})">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
@@ -156,7 +157,7 @@ function addTodo() {
     fetch('/api/todos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, status: 0 })
+        body: JSON.stringify({ content, completed_yn: 0 })
     })
         .then(() => {
             loadTodoLists(1);
@@ -171,7 +172,7 @@ function updateTodo(todoId, originalPage) {
     fetch(`/api/todos/${todoId}`)
         .then(response => response.json())
         .then(todo => {
-            if (newContent === (todo.CONTENT || '').trim()) {
+            if (newContent === (todo.content || '').trim()) {
                 alert('변경사항이 없습니다!');
                 loadTodoLists(originalPage || currentPage);
                 return;
@@ -212,13 +213,15 @@ function showCreateTodo() {
 
 function editTodo(todoId, page) {
     editingPage = page || currentPage;
+
     fetch(`/api/todos/${todoId}`)
         .then(response => response.json())
         .then(todo => {
             document.getElementById('todoLists').innerHTML = editTodoModalHTML(todo);
+
             document.getElementById('editTodoForm').onsubmit = function(e) {
                 e.preventDefault();
-                updateTodo(todo.TODO_ID, editingPage);
+                updateTodo(todoId, editingPage);
             };
         })
         .catch(err => alert('상세 조회 실패: ' + err));
@@ -249,9 +252,9 @@ function editTodoModalHTML(todo) {
                 <h2><i class="fas fa-edit"></i> 할 일 수정</h2>
             </div>
             <form id="editTodoForm" class="edit-form">
-                <input type="hidden" id="editTodoId" value="${todo.TODO_ID}">
+                <input type="hidden" id="editTodoId" value="${todo.todo_id}">
                 <textarea id="editContent" rows="6" placeholder="할 일을 입력하세요..." 
-                          class="edit-textarea" required maxlength="1000">${todo.CONTENT || ''}</textarea>
+                          class="edit-textarea" required maxlength="1000">${todo.content || ''}</textarea>
                 <div class="edit-buttons">
                     <button type="button" class="edit-btn-cancel" onclick="loadTodoLists(editingPage)">취소</button>
                     <button type="submit" class="edit-btn-save">수정완료</button>

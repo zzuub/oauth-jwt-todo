@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Map;
 import java.util.Objects;
 
-//Json 형태로 바로 응답 보낼 수 있음 (@RequestBody가 암시적으로 추가)
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

@@ -5,14 +5,14 @@
 
     <select id="getTodoList" parameterType="map" resultType="map">
         SELECT
-            todo_id AS TODO_ID,
-            content AS CONTENT,
+            todo_id,
+            content,
             DATE_FORMAT(regist_date, '%Y-%m-%d') AS registDate,
             CASE
                 WHEN completed_yn = 'Y' THEN 1
                 WHEN completed_yn = 'n' THEN 0
                 ELSE 0
-            END AS STATUS
+            END AS completed_yn
         FROM board
         <where>
             delete_flag_yn = 'N'
@@ -55,14 +55,14 @@
 
     <select id="getTodoDetail" parameterType="int" resultType="map">
         SELECT
-            todo_id AS TODO_ID,
-            content AS CONTENT,
+            todo_id,
+            content,
             DATE_FORMAT(regist_date, '%Y-%m-%d') AS registDate,
             CASE
                 WHEN completed_yn = 'Y' THEN 1
                 WHEN completed_yn = 'N' THEN 0
                 ELSE 0
-            END AS STATUS
+            END AS completed_yn
         FROM board
         WHERE todo_id = #{todoId}
             AND delete_flag_yn = 'N'
@@ -76,8 +76,8 @@
         VALUES (
             #{content},
             CASE
-                WHEN #{status} = 1 THEN 'Y'
-                WHEN #{status} = 0 THEN 'N'
+                WHEN #{completed_yn} = 1 THEN 'Y'
+                WHEN #{completed_yn} = 0 THEN 'N'
                 ELSE 'N'
             END
         )
@@ -86,12 +86,7 @@
     <update id="updateTodo" parameterType="map">
         UPDATE board
         SET
-            content = #{content},
-            completed_yn =
-            CASE
-                WHEN #{status} = 1 THEN 'Y'
-                ELSE 'N'
-            END
+            content = #{content}
         WHERE todo_id = #{todoId}
     </update>
 
@@ -100,7 +95,7 @@
         SET
             completed_yn =
             CASE
-                WHEN #{status} = 1 THEN 'Y'
+                WHEN #{completed_yn} = 1 THEN 'Y'
                 ELSE 'N'
             END
         WHERE todo_id = #{todoId}
