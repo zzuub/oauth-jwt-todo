@@ -18,13 +18,17 @@ public enum ExceptionCode {
 
     //404
     TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO001", "존재하지 않는 할일입니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH004", "사용자를 찾을 수 없습니다."),
 
     //409
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "MEMBER001", "이미 가입된 이메일입니다."),
 
     //500
     UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "TODO002", "수정에 실패했습니다."),
-    DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "TODO003", "삭제에 실패했습니다.");
+    DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "TODO003", "삭제에 실패했습니다."),
+    USER_REGISTRATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH005", "회원가입에 실패했습니다.");
+
+
 
     private final HttpStatus status;
     private final String code;

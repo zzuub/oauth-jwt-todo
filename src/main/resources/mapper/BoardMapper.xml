@@ -16,6 +16,7 @@
         FROM board
         <where>
             delete_flag_yn = 'N'
+            and user_id = #{userId}
             <if test="search != null and search != ''">
                 AND content LIKE CONCAT('%', #{search}, '%')
             </if>
@@ -40,6 +41,7 @@
         FROM board
         <where>
             delete_flag_yn = 'N'
+            and user_id = #{userId}
             <if test="search != null and search != ''">
                 AND content LIKE CONCAT('%', #{search}, '%')
             </if>
@@ -65,13 +67,15 @@
             END AS completed_yn
         FROM board
         WHERE todo_id = #{todoId}
+            AND user_id = #{userId}
             AND delete_flag_yn = 'N'
     </select>
 
     <insert id="addTodo" parameterType="map" useGeneratedKeys="true" keyProperty="todoId">
         INSERT INTO board (
             content,
-            completed_yn
+            completed_yn,
+            user_id
         )
         VALUES (
             #{content},
@@ -79,7 +83,8 @@
                 WHEN #{completed_yn} = 1 THEN 'Y'
                 WHEN #{completed_yn} = 0 THEN 'N'
                 ELSE 'N'
-            END
+            END,
+            #{userId}
         )
     </insert>
 
@@ -88,6 +93,7 @@
         SET
             content = #{content}
         WHERE todo_id = #{todoId}
+        AND user_id = #{userId}
     </update>
 
     <update id="updateTodoStatus" parameterType="map">
@@ -99,6 +105,7 @@
                 ELSE 'N'
             END
         WHERE todo_id = #{todoId}
+        ANd user_id = #{userId}
     </update>
 
     <update id="deleteTodo" parameterType="int">
@@ -106,6 +113,7 @@
         SET
             delete_flag_yn = 'Y'
         WHERE todo_id = #{todoId}
+        AND user_id = #{userId}
         AND delete_flag_yn = 'N'
     </update>
 

@@ -6,7 +6,6 @@ import com.domain.todo.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,8 +21,8 @@ public class BoardService {
         return result;
     }
 
-    public Map<String, Object> getTodoDetail(int todoId) {
-        Map<String, Object> result = boardMapper.getTodoDetail(todoId);
+    public Map<String, Object> getTodoDetail(int todoId, String userId) {
+        Map<String, Object> result = boardMapper.getTodoDetail(todoId, userId);
         if (result == null || result.isEmpty()) {
             throw new ApiException(ExceptionCode.TODO_NOT_FOUND);
         }
@@ -32,6 +31,11 @@ public class BoardService {
 
     public Map<String, Object> addTodo(Map<String, Object> param) {
         validateTodoParam(param);
+
+        String userId = (String) param.get("userId");
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new ApiException(ExceptionCode.AUTH_REQUIRED);
+        }
 
         int result = boardMapper.addTodo(param);
         if (result == 0) {
@@ -43,7 +47,8 @@ public class BoardService {
     public Map<String, Object> updateTodo(Map<String, Object> param) {
         validateTodoParam(param);
         int todoId = (Integer) param.get("todoId");
-        getTodoOrThrow(todoId);
+        String userId = (String) param.get("userId");
+        getTodoOrThrow(todoId,userId);
 
         int result = boardMapper.updateTodo(param);
         if (result == 0) {
@@ -55,12 +60,14 @@ public class BoardService {
     public Map<String, Object> updateTodoStatus(Map<String, Object> param) {
         int todoId = (Integer) param.get("todoId");
         int completed_yn = (Integer) param.get("completed_yn");
+        String userId = (String) param.get("userId");
 
-        getTodoOrThrow(todoId);
+        getTodoOrThrow(todoId, userId);
 
         Map<String, Object> updateParam = new HashMap<>();
         updateParam.put("todoId", todoId);
         updateParam.put("completed_yn", completed_yn);
+        updateParam.put("userId", userId);
 
         int result = boardMapper.updateTodoStatus(updateParam);
         if (result == 0) {
@@ -70,10 +77,10 @@ public class BoardService {
         return Map.of("todoId", todoId, "completed_yn", completed_yn);
     }
 
-    public Map<String, Object> deleteTodo(int todoId) {
-        getTodoOrThrow(todoId);
+    public Map<String, Object> deleteTodo(int todoId, String userId) {
+        getTodoOrThrow(todoId, userId);
 
-        int result = boardMapper.deleteTodo(todoId);
+        int result = boardMapper.deleteTodo(todoId, userId);
         if (result == 0) {
             throw new ApiException(ExceptionCode.DELETE_FAILED);
         }
@@ -82,8 +89,8 @@ public class BoardService {
     }
 
     //TodoId 확인,예외처리
-    private Map<String, Object> getTodoOrThrow(int todoId) {
-        Map<String, Object> todo = boardMapper.getTodoDetail(todoId);
+    private Map<String, Object> getTodoOrThrow(int todoId, String userId) {
+        Map<String, Object> todo = boardMapper.getTodoDetail(todoId, userId);
         if (todo == null || todo.isEmpty()) {
             throw new ApiException(ExceptionCode.TODO_NOT_FOUND);
         }

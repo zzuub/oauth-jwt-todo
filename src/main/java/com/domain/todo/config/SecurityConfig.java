@@ -1,5 +1,6 @@
 package com.domain.todo.config;
 
+import com.domain.todo.auth.service.CustomOAuth2UserService;
 import com.domain.todo.security.CustomAccessDeniedHandler;
 import com.domain.todo.security.CustomAuthEntryPoint;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final CustomAuthEntryPoint customAuthEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomOAuth2UserService  customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -26,14 +28,23 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/", true)  // 구글 로그인 후 메인으로
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)   // 🔹 DB 저장 로직 연결
+                        )
+                        .defaultSuccessUrl("/", true)
+                        .failureUrl("/")   // ⬅ 실패해도 / 로 보냄 (혹은 /error 등)
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
+                )
+                .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(customAuthEntryPoint)   // 401 JSON
+                .accessDeniedHandler(customAccessDeniedHandler)   // 403 JSON
                 );
+
 
         return http.build();
     }

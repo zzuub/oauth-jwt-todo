@@ -10,7 +10,10 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan("com.domain.todo.board.mapper")
+@MapperScan(basePackages = {
+        "com.domain.todo.board.mapper",
+        "com.domain.todo.auth.mapper"
+})
 public class DatabaseConfig {
     @Bean
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {

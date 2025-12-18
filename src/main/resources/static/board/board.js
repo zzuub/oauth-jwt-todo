@@ -34,6 +34,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+function googleLogin() {
+    window.location.href = "/oauth2/authorization/google";
+}
+
 function loadTodoLists(page = 1) {
     currentPage = page;
 
@@ -45,13 +49,25 @@ function loadTodoLists(page = 1) {
     if (currentStatus) params.append('status', currentStatus);
 
     fetch(`/api/getTodoList?${params}`)
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 401) {
+                if (confirm("로그인이 필요합니다. 구글 로그인 하시겠습니까?")) {
+                    window.location.href = "/oauth2/authorization/google";
+                }
+                throw new Error('UNAUTHORIZED');
+            }
+            return response.json();
+        })
         .then(data => {
             displayTodoLists(data);
-        }).catch(err => {
-        document.getElementById('todoLists').innerHTML =
-            '<p style="text-align:center;color:white;font-size:18px;padding:40px;">데이터 로드 실패</p>';
-    });
+        })
+        .catch(err => {
+            if (err.message === 'UNAUTHORIZED') {
+                return;
+            }
+            document.getElementById('todoLists').innerHTML =
+                '<p style="text-align:center;color:white;font-size:18px;padding:40px;">데이터 로드 실패</p>';
+        });
 }
 
 function displayTodoLists(data) {

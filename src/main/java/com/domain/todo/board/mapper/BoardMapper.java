@@ -11,7 +11,7 @@ public interface BoardMapper {
 
     int getTodoListCnt(Map<String, Object> param);
 
-    Map<String, Object> getTodoDetail(int todoId);
+    Map<String, Object> getTodoDetail(int todoId, String userId);
 
     int addTodo(Map<String, Object> param);
 
@@ -19,5 +19,5 @@ public interface BoardMapper {
 
     int updateTodoStatus(Map<String, Object> param);
 
-    int deleteTodo(int todoId);
+    int deleteTodo(int todoId, String userId);
 }
