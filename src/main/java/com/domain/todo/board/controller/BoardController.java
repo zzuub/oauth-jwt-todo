@@ -22,9 +22,10 @@ public class BoardController {
                                            @RequestParam(required = false) String search,
                                            @RequestParam(required = false) Integer status) {
         String userId = principal.getAttribute("sub").toString();
+        String provider = principal.getAttribute("provider").toString();
 
         Map<String, Object> param = new HashMap<>(Map.of(
-                "userId", userId,
+                "userId", provider + "_" + userId,
                 "offset", (page - 1) * pageSize,
                 "pageSize", pageSize
         ));
@@ -51,14 +52,18 @@ public class BoardController {
     public Map<String, Object> getTodoDetail(@AuthenticationPrincipal OAuth2User principal,
                                              @PathVariable int todoId) {
         String userId = principal.getAttribute("sub").toString();
-        return boardService.getTodoDetail(todoId, userId);
+        String provider = principal.getAttribute("provider").toString();
+
+        return boardService.getTodoDetail(todoId, provider + "_" +userId);
     }
 
     @PostMapping("/todos")
     public Map<String, Object> addTodo(@AuthenticationPrincipal OAuth2User principal,
                                        @RequestBody Map<String, Object> param) {
         String userId = principal.getAttribute("sub").toString();
-        param.put("userId", userId);
+        String provider = principal.getAttribute("provider").toString();
+
+        param.put("userId", provider + "_" + userId);
         return boardService.addTodo(param);
     }
 
@@ -67,35 +72,45 @@ public class BoardController {
                                           @PathVariable int todoId,
                                           @RequestBody Map<String, Object> param) {
         String userId = principal.getAttribute("sub").toString();
+        String provider = principal.getAttribute("provider").toString();
 
         param.put("todoId", todoId);
-        param.put("userId", userId);
+        param.put("userId", provider + "_" + userId);
         return boardService.updateTodo(param);
     }
 
     @PatchMapping("/todos/{todoId}/status")
     public Map<String, Object> updateTodoStatus(@AuthenticationPrincipal OAuth2User principal,
-                                                @PathVariable int todoId) {
+                                                @PathVariable int todoId,
+                                                @RequestBody Map<String, Object> param) {
         String userId = principal.getAttribute("sub").toString();
+        String provider = principal.getAttribute("provider").toString();
 
-        Map<String, Object> todo = boardService.getTodoDetail(todoId, userId);
+        //Map<String, Object> todo = boardService.getTodoDetail(todoId, provider + "_" + userId);
 
-        int currentStatus = ((Number) todo.get("completed_yn")).intValue();
-        int newStatus = currentStatus == 1 ? 0 : 1;
+        //int currentStatus = ((Number) todo.get("completed_yn")).intValue();
+        int newStatus = (Integer) param.get("completedYn") == 1 ? 0 : 1;
 
-        Map<String, Object> param = Map.of(
-                "userId", userId,
+        Map<String, Object> param2 = Map.of(
+                "userId", provider + "_" + userId,
                 "todoId", todoId,
                 "completed_yn", newStatus
         );
-        return boardService.updateTodoStatus(param);
+        return boardService.updateTodoStatus(param2);
     }
 
     @DeleteMapping("/todos/{todoId}")
     public Map<String, Object> deleteTodo(@AuthenticationPrincipal OAuth2User principal,
                                           @PathVariable int todoId) {
         String userId = principal.getAttribute("sub").toString();
-        return boardService.deleteTodo(todoId, userId);
+        String provider = principal.getAttribute("provider").toString();
+
+        Map<String, Object> param = Map.of(
+                "userId", provider + "_" + userId,
+                "todoId", todoId
+        );
+
+        return boardService.deleteTodo(param);
     }
 
 }

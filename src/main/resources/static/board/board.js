@@ -122,7 +122,7 @@ function displayTodoLists(data) {
                                 <td data-label="작성일">${todo.registDate}</td>
                                 <td data-label="상태">${todo.completed_yn == 1 ? '✅ 완료' : '⏳ 진행중'}</td>
                                 <td data-label="작업" class="todo-actions">
-                                    <button class="done-btn" onclick="toggleTodo(${todo.todo_id})">
+                                    <button class="done-btn" onclick="toggleTodo(${todo.todo_id}, ${todo.completed_yn})">
                                         ${todo.completed_yn == 1 ? '↩️ 취소' : '✅ 완료'}
                                     </button>
                                     <button class="edit-todo" onclick="editTodo(${todo.todo_id}, ${currentPage})">
@@ -205,8 +205,12 @@ function updateTodo(todoId, originalPage) {
         .catch(err => alert('할 일 정보 조회 실패: ' + err));
 }
 
-function toggleTodo(todoId) {
-    fetch(`/api/todos/${todoId}/status`, { method: 'PATCH' })
+function toggleTodo(todoId, completedYn) {
+    fetch(`/api/todos/${todoId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completedYn: completedYn})
+    })
         .then(() => loadTodoLists(currentPage))
         .catch(err => alert('상태 변경 실패: ' + err));
 }

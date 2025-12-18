@@ -77,10 +77,13 @@ public class BoardService {
         return Map.of("todoId", todoId, "completed_yn", completed_yn);
     }
 
-    public Map<String, Object> deleteTodo(int todoId, String userId) {
+    public Map<String, Object> deleteTodo(Map<String, Object> param) {
+        int todoId = (Integer) param.get("todoId");
+        String userId = (String) param.get("userId");
+
         getTodoOrThrow(todoId, userId);
 
-        int result = boardMapper.deleteTodo(todoId, userId);
+        int result = boardMapper.deleteTodo(param);
         if (result == 0) {
             throw new ApiException(ExceptionCode.DELETE_FAILED);
         }

@@ -55,7 +55,7 @@
         </where>
     </select>
 
-    <select id="getTodoDetail" parameterType="int" resultType="map">
+    <select id="getTodoDetail" resultType="map">
         SELECT
             todo_id,
             content,
@@ -105,10 +105,10 @@
                 ELSE 'N'
             END
         WHERE todo_id = #{todoId}
-        ANd user_id = #{userId}
+        AND user_id = #{userId}
     </update>
 
-    <update id="deleteTodo" parameterType="int">
+    <update id="deleteTodo" parameterType="map">
         UPDATE board
         SET
             delete_flag_yn = 'Y'

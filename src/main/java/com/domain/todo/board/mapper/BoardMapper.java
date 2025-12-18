@@ -1,6 +1,7 @@
 package com.domain.todo.board.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,8 @@ public interface BoardMapper {
 
     int getTodoListCnt(Map<String, Object> param);
 
-    Map<String, Object> getTodoDetail(int todoId, String userId);
+    Map<String, Object> getTodoDetail(@Param("todoId") int todoId,
+                                      @Param("userId") String userId);
 
     int addTodo(Map<String, Object> param);
 
@@ -19,5 +21,5 @@ public interface BoardMapper {
 
     int updateTodoStatus(Map<String, Object> param);
 
-    int deleteTodo(int todoId, String userId);
+    int deleteTodo(Map<String, Object> param);
 }
