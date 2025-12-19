@@ -86,9 +86,6 @@ public class BoardController {
         String userId = principal.getAttribute("sub").toString();
         String provider = principal.getAttribute("provider").toString();
 
-        //Map<String, Object> todo = boardService.getTodoDetail(todoId, provider + "_" + userId);
-
-        //int currentStatus = ((Number) todo.get("completed_yn")).intValue();
         int newStatus = (Integer) param.get("completedYn") == 1 ? 0 : 1;
 
         Map<String, Object> param2 = Map.of(

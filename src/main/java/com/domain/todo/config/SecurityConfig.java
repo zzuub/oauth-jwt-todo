@@ -24,15 +24,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/board/**", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/api/**").authenticated() // Todo API 보호
+                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)   // 🔹 DB 저장 로직 연결
+                                .userService(customOAuth2UserService)
                         )
                         .defaultSuccessUrl("/", true)
-                        .failureUrl("/")   // ⬅ 실패해도 / 로 보냄 (혹은 /error 등)
+                        .failureUrl("/")
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")

@@ -21,16 +21,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId(); // "google"
-        String provider = registrationId.toUpperCase(); // GOOGLE
+        String provider = registrationId; // GOOGLE
 
-        String providerId = oAuth2User.getAttribute("sub");
+        //구글에서 받은 유저 정보 추출
+        String providerId = oAuth2User.getAttribute("sub"); //구글 고유 ID
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
 
-        // 🔹 여기서 DB 저장/조회
+        // DB에 사용자 정보 저장 or 업데이트
         authService.syncAuthUser(provider, providerId, email, name);
 
-        // ⭐ provider를 OAuth2User에 추가!
         Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
         attributes.put("provider", registrationId);
 

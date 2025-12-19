@@ -20,7 +20,7 @@
             <if test="search != null and search != ''">
                 AND content LIKE CONCAT('%', #{search}, '%')
             </if>
-            <if test="status != null">
+            <if test="status != null and status != ''">
                 AND completed_yn =
                 CASE
                     WHEN #{status} = 1 THEN 'Y'
@@ -45,7 +45,7 @@
             <if test="search != null and search != ''">
                 AND content LIKE CONCAT('%', #{search}, '%')
             </if>
-            <if test="status != null">
+            <if test="status != null and status != ''">
                 AND completed_yn =
                 CASE
                     WHEN #{status} = 1 THEN 'Y'

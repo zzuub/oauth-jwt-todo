@@ -14,6 +14,10 @@ public class AuthService {
     private final AuthMapper authMapper;
 
     public Map<String,Object> getCurrentUser(String provider,String providerId){
+        if (providerId == null) {
+            throw new ApiException(ExceptionCode.AUTH_REQUIRED);
+        }
+
         Map<String, Object> user = authMapper.findByProviderAndId(provider, providerId);
         if(user == null){
             throw new ApiException(ExceptionCode.USER_NOT_FOUND);
@@ -21,10 +25,10 @@ public class AuthService {
         return user;
     }
 
+
     public Map<String,Object> syncAuthUser(String provider,String providerId, String email, String displayName){
         Map<String, Object> existingUser = authMapper.findByProviderAndId(provider, providerId);
         if (existingUser != null && !existingUser.isEmpty()) {
-            System.out.println("=== 기존 사용자 존재, insert 스킵 ===");
             return existingUser;
         }
 
@@ -47,7 +51,7 @@ public class AuthService {
     }
 
     private String generateUserId(String provider, String providerId) {
-        String userId = provider.toLowerCase() + "_" + providerId;
+        String userId = provider + "_" + providerId;
         if (userId.length() > 50) {
             userId = userId.substring(0, 50);
         }

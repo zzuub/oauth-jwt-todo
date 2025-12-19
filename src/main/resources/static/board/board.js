@@ -6,6 +6,7 @@ let searchTimeout;
 let editingPage = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
+    updateAuthUI();
     loadTodoLists();
 
     document.getElementById('searchInput').addEventListener('input', function() {
@@ -51,9 +52,8 @@ function loadTodoLists(page = 1) {
     fetch(`/api/getTodoList?${params}`)
         .then(response => {
             if (response.status === 401) {
-                if (confirm("로그인이 필요합니다. 구글 로그인 하시겠습니까?")) {
-                    window.location.href = "/oauth2/authorization/google";
-                }
+                document.getElementById('todoLists').innerHTML =
+                    '<p style="text-align:center;color:darkred;font-size:40px;padding:40px;">로그인이 필요합니다.</p>';
                 throw new Error('UNAUTHORIZED');
             }
             return response.json();
@@ -282,4 +282,34 @@ function editTodoModalHTML(todo) {
             </form>
         </div>
     `;
+}
+
+function updateAuthUI() {
+    fetch(`/api/getTodoList?page=1&pageSize=1`)
+        .then(response => {
+            //const loginStatus = document.getElementById('loginStatus');
+            const loginButton = document.getElementById('loginButton');
+            const logoutForm  = document.getElementById('logoutForm');
+
+            if (response.status === 401) {
+                // 비로그인
+                //loginStatus.textContent = '로그인이 필요합니다.';
+                loginButton.style.display = 'inline-flex';
+                logoutForm.style.display  = 'none';
+            } else {
+                // 로그인
+                //loginStatus.textContent = '로그인 상태입니다.';
+                loginButton.style.display = 'none';
+                logoutForm.style.display  = 'inline-flex';
+            }
+        })
+        .catch(() => {
+            // 에러 시 일단 비로그인처럼 처리
+            //const loginStatus = document.getElementById('loginStatus');
+            const loginButton = document.getElementById('loginButton');
+            const logoutForm  = document.getElementById('logoutForm');
+            //loginStatus.textContent = '';
+            loginButton.style.display = 'inline-flex';
+            logoutForm.style.display  = 'none';
+        });
 }

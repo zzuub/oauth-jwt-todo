@@ -18,12 +18,8 @@ public class AuthController {
 
     @GetMapping("/me")
     public Map<String, Object> me(@AuthenticationPrincipal OAuth2User principal) {
-        if (principal == null) {
-            return Map.of("success", false, "message", "로그인이 필요합니다.");
-        }
-
+        String provider = (String) principal.getAttributes().get("provider");
         String providerId = principal.getAttribute("sub");
-        String provider = "GOOGLE"; // CustomOAuth2UserService에서 동적 처리
 
         return authService.getCurrentUser(provider, providerId);
     }
