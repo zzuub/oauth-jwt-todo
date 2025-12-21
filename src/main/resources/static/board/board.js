@@ -4,6 +4,7 @@ let currentStatus = '';
 const PAGE_SIZE = 10;
 let searchTimeout;
 let editingPage = 1;
+var testObj;
 
 document.addEventListener('DOMContentLoaded', function() {
     updateAuthUI();
@@ -51,10 +52,47 @@ function loadTodoLists(page = 1) {
 
     fetch(`/api/getTodoList?${params}`)
         .then(response => {
-            if (response.status === 401) {
+            /*if (response.status === 401) {
+                testObj = response;
+                console.log(testObj);
+//                alert(response.message);
                 document.getElementById('todoLists').innerHTML =
                     '<p style="text-align:center;color:darkred;font-size:40px;padding:40px;">로그인이 필요합니다.</p>';
+//                     window.location.href = '/oauth2/authorization/google';
                 throw new Error('UNAUTHORIZED');
+                */
+
+
+                if (response.status === 401) {
+                    return response.json().then(error => {
+                        console.log('401 Error:', error);
+                        //alert('⏰ ' + error.message); // "세션이 만료되었습니다. 다시 로그인해주세요"
+                        document.getElementById('todoLists').innerHTML =
+                        '<p style="text-align:center;color:darkred;font-size:40px;padding:40px;">로그인이 필요합니다.</p>';
+
+/*
+                         // ⭐ 세션 만료 (로그인했었는데 만료됨)
+                        if (error.code === 'AUTH_005') {
+                            alert('⏰ ' + error.message); // "세션이 만료되었습니다. 다시 로그인해주세요"
+                            window.location.href = '/oauth2/authorization/google';
+                        }
+                        // ⭐ 처음 로그인 안 됨 (세션 없음)
+                        else if (error.code === 'AUTH_002') {
+                            alert('🔒 ' + error.message); // "로그인이 필요합니다"
+                            window.location.href = '/oauth2/authorization/google';
+                        }
+                        // 기타 인증 실패
+                        else {
+                            alert('🔒 인증이 필요합니다');
+                            document.getElementById('todoLists').innerHTML =
+                                '<p style="text-align:center;color:darkred;font-size:40px;padding:40px;">로그인이 필요합니다.</p>';
+                        }*/
+
+                        throw new Error('UNAUTHORIZED');
+
+
+
+                })
             }
             return response.json();
         })
@@ -285,6 +323,7 @@ function editTodoModalHTML(todo) {
 }
 
 function updateAuthUI() {
+    console.log("here");
     fetch(`/api/getTodoList?page=1&pageSize=1`)
         .then(response => {
             //const loginStatus = document.getElementById('loginStatus');

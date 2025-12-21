@@ -1,12 +1,16 @@
 package com.domain.todo.board.controller;
 
 import com.domain.todo.board.service.BoardService;
+import com.domain.todo.exception.ApiException;
+import com.domain.todo.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor

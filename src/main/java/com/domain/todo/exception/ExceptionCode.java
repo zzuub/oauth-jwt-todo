@@ -12,6 +12,8 @@ public enum ExceptionCode {
     //401
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "AUTH001", "로그인에 실패했습니다."),
     AUTH_REQUIRED(HttpStatus.UNAUTHORIZED, "AUTH002", "로그인이 필요합니다."),
+    SESSION_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH_005", "세션이 만료되었습니다. 다시 로그인해주세요"), // ⬅ 추가
+
 
     //403
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "AUTH003", "접근 권한이 없습니다."),
@@ -26,7 +28,7 @@ public enum ExceptionCode {
     //500
     UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "TODO002", "수정에 실패했습니다."),
     DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "TODO003", "삭제에 실패했습니다."),
-    USER_REGISTRATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH005", "회원가입에 실패했습니다.");
+    USER_REGISTRATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH007", "회원가입에 실패했습니다.");
 
 
 

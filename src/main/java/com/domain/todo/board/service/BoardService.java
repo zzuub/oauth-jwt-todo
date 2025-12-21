@@ -17,7 +17,8 @@ public class BoardService {
     public Map<String, Object> getTodoList(Map<String,Object> param) {
         Map<String,Object> result = new HashMap<>();
         result.put("data", boardMapper.getTodoList(param));
-        //result.put("todoCnt", boardMapper.getTodoListCnt(param));
+
+
         return result;
     }
 
