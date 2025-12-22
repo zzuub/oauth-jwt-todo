@@ -4,7 +4,6 @@ let currentStatus = '';
 const PAGE_SIZE = 10;
 let searchTimeout;
 let editingPage = 1;
-var testObj;
 
 document.addEventListener('DOMContentLoaded', function() {
     updateAuthUI();
@@ -36,10 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function googleLogin() {
-    window.location.href = "/oauth2/authorization/google";
-}
-
 function loadTodoLists(page = 1) {
     currentPage = page;
 
@@ -52,46 +47,27 @@ function loadTodoLists(page = 1) {
 
     fetch(`/api/getTodoList?${params}`)
         .then(response => {
-            /*if (response.status === 401) {
-                testObj = response;
-                console.log(testObj);
-//                alert(response.message);
-                document.getElementById('todoLists').innerHTML =
-                    '<p style="text-align:center;color:darkred;font-size:40px;padding:40px;">로그인이 필요합니다.</p>';
-//                     window.location.href = '/oauth2/authorization/google';
-                throw new Error('UNAUTHORIZED');
-                */
-
-
                 if (response.status === 401) {
                     return response.json().then(error => {
                         console.log('401 Error:', error);
-                        //alert('⏰ ' + error.message); // "세션이 만료되었습니다. 다시 로그인해주세요"
                         document.getElementById('todoLists').innerHTML =
                         '<p style="text-align:center;color:darkred;font-size:40px;padding:40px;">로그인이 필요합니다.</p>';
 
-/*
-                         // ⭐ 세션 만료 (로그인했었는데 만료됨)
                         if (error.code === 'AUTH_005') {
-                            alert('⏰ ' + error.message); // "세션이 만료되었습니다. 다시 로그인해주세요"
-                            window.location.href = '/oauth2/authorization/google';
+                            alert('⏰ ' + error.message);
+                            window.location.href = '/login.html';
                         }
-                        // ⭐ 처음 로그인 안 됨 (세션 없음)
                         else if (error.code === 'AUTH_002') {
-                            alert('🔒 ' + error.message); // "로그인이 필요합니다"
-                            window.location.href = '/oauth2/authorization/google';
+                            alert('🔒 ' + error.message);
+                            window.location.href = '/login.html';
                         }
-                        // 기타 인증 실패
                         else {
                             alert('🔒 인증이 필요합니다');
                             document.getElementById('todoLists').innerHTML =
                                 '<p style="text-align:center;color:darkred;font-size:40px;padding:40px;">로그인이 필요합니다.</p>';
-                        }*/
+                        }
 
                         throw new Error('UNAUTHORIZED');
-
-
-
                 })
             }
             return response.json();
@@ -323,31 +299,23 @@ function editTodoModalHTML(todo) {
 }
 
 function updateAuthUI() {
-    console.log("here");
     fetch(`/api/getTodoList?page=1&pageSize=1`)
         .then(response => {
-            //const loginStatus = document.getElementById('loginStatus');
             const loginButton = document.getElementById('loginButton');
             const logoutForm  = document.getElementById('logoutForm');
 
             if (response.status === 401) {
-                // 비로그인
-                //loginStatus.textContent = '로그인이 필요합니다.';
                 loginButton.style.display = 'inline-flex';
                 logoutForm.style.display  = 'none';
             } else {
-                // 로그인
-                //loginStatus.textContent = '로그인 상태입니다.';
                 loginButton.style.display = 'none';
                 logoutForm.style.display  = 'inline-flex';
             }
         })
         .catch(() => {
-            // 에러 시 일단 비로그인처럼 처리
-            //const loginStatus = document.getElementById('loginStatus');
+            // 네트워크 에러 → 로그인 필요로 처리
             const loginButton = document.getElementById('loginButton');
             const logoutForm  = document.getElementById('logoutForm');
-            //loginStatus.textContent = '';
             loginButton.style.display = 'inline-flex';
             logoutForm.style.display  = 'none';
         });

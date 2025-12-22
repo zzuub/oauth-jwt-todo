@@ -18,18 +18,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        //super-> 부모클래스(DefaultOAuth2UserService) 의 load.user를 생성
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId(); // "google"
-        String provider = registrationId; // GOOGLE
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        String provider = registrationId;
 
-        //구글에서 받은 유저 정보 추출
-        String providerId = oAuth2User.getAttribute("sub"); //구글 고유 ID
+        String providerId = oAuth2User.getAttribute("sub");
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
 
-        // DB에 사용자 정보 저장 or 업데이트
         authService.syncAuthUser(provider, providerId, email, name);
 
         Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());

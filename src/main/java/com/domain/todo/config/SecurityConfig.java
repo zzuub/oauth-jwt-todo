@@ -23,16 +23,30 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/board/**", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers(
+                                "/css/**",
+                                "/js/**",
+                                "/board/**",
+                                "/login.html",
+                                "/oauth2/**",
+                                "/login/oauth2/**",
+                                "/favicon.ico",
+                                "/.well-known/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/api/**",
+                                "/",
+                                "/board/**"
+                        ).authenticated()
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login.html")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
                         .defaultSuccessUrl("/", true)
-                        .failureUrl("/")
+                        .failureUrl("/login?error")
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -41,8 +55,8 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                 )
                 .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(customAuthEntryPoint)   // 401 JSON
-                .accessDeniedHandler(customAccessDeniedHandler)   // 403 JSON
+                .authenticationEntryPoint(customAuthEntryPoint)
+                .accessDeniedHandler(customAccessDeniedHandler)
                 );
 
 

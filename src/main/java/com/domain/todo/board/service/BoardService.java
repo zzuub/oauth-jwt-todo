@@ -18,7 +18,6 @@ public class BoardService {
         Map<String,Object> result = new HashMap<>();
         result.put("data", boardMapper.getTodoList(param));
 
-
         return result;
     }
 
