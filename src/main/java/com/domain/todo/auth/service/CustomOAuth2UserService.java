@@ -38,9 +38,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             name       = oAuth2User.getAttribute("name");
 
         } else if ("kakao".equals(registrationId)) {
-
-            System.out.println("Kakao attributes = " + oAuth2User.getAttributes());
-
             // id 는 Long 이라서 무조건 문자열로 변환해서 사용
             Object idObj = oAuth2User.getAttribute("id");
             providerId   = (idObj != null) ? String.valueOf(idObj) : null;
