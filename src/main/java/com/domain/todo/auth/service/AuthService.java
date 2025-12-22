@@ -33,14 +33,13 @@ public class AuthService {
         }
 
         String userId = generateUserId(provider, providerId);
-        Map<String, Object> param= Map.of(
-                "user_id",userId,
-                "email", email,
-                "display_name", displayName != null ? displayName : "USER",
-                "provider", provider,
-                "provider_id", providerId,
-                "created_by","SYSTEM"
-        );
+        Map<String, Object> param = new java.util.HashMap<>();
+        param.put("user_id", userId);
+        param.put("email", email); // null 가능
+        param.put("display_name", (displayName != null ? displayName : "USER"));
+        param.put("provider", provider);
+        param.put("provider_id", providerId);
+        param.put("created_by", "SYSTEM");
 
         int result = authMapper.insertUser(param);
         if (result == 0) {

@@ -25,11 +25,17 @@ public class BoardController {
                                            @RequestParam(defaultValue = "10") int pageSize,
                                            @RequestParam(required = false) String search,
                                            @RequestParam(required = false) Integer status) {
-        String userId = principal.getAttribute("sub").toString();
-        String provider = principal.getAttribute("provider").toString();
+
+        if (principal == null) {
+            throw new ApiException(ExceptionCode.AUTH_REQUIRED);
+        }
+
+        String provider   = (String) principal.getAttributes().get("provider");
+        String providerId = (String) principal.getAttributes().get("providerId");
+        String userId     = provider + "_" + providerId;
 
         Map<String, Object> param = new HashMap<>(Map.of(
-                "userId", provider + "_" + userId,
+                "userId", userId,
                 "offset", (page - 1) * pageSize,
                 "pageSize", pageSize
         ));
@@ -46,7 +52,7 @@ public class BoardController {
 
         result.putAll(Map.of(
                 "currentPage", page,
-                "totalCnt", boardService.getTodoListCnt(param),
+                "totalCnt", totalCnt,
                 "totalPages", (int) Math.ceil((double) totalCnt / pageSize)
         ));
         return result;
@@ -55,19 +61,23 @@ public class BoardController {
     @GetMapping("/todos/{todoId}")
     public Map<String, Object> getTodoDetail(@AuthenticationPrincipal OAuth2User principal,
                                              @PathVariable int todoId) {
-        String userId = principal.getAttribute("sub").toString();
-        String provider = principal.getAttribute("provider").toString();
 
-        return boardService.getTodoDetail(todoId, provider + "_" +userId);
+        String provider   = (String) principal.getAttributes().get("provider");
+        String providerId = (String) principal.getAttributes().get("providerId");
+        String userId     = provider + "_" + providerId;
+
+        return boardService.getTodoDetail(todoId, userId);
     }
 
     @PostMapping("/todos")
     public Map<String, Object> addTodo(@AuthenticationPrincipal OAuth2User principal,
                                        @RequestBody Map<String, Object> param) {
-        String userId = principal.getAttribute("sub").toString();
-        String provider = principal.getAttribute("provider").toString();
 
-        param.put("userId", provider + "_" + userId);
+        String provider   = (String) principal.getAttributes().get("provider");
+        String providerId = (String) principal.getAttributes().get("providerId");
+        String userId     = provider + "_" + providerId;
+
+        param.put("userId", userId);
         return boardService.addTodo(param);
     }
 
@@ -75,11 +85,13 @@ public class BoardController {
     public Map<String, Object> updateTodo(@AuthenticationPrincipal OAuth2User principal,
                                           @PathVariable int todoId,
                                           @RequestBody Map<String, Object> param) {
-        String userId = principal.getAttribute("sub").toString();
-        String provider = principal.getAttribute("provider").toString();
+
+        String provider   = (String) principal.getAttributes().get("provider");
+        String providerId = (String) principal.getAttributes().get("providerId");
+        String userId     = provider + "_" + providerId;
 
         param.put("todoId", todoId);
-        param.put("userId", provider + "_" + userId);
+        param.put("userId", userId);
         return boardService.updateTodo(param);
     }
 
@@ -87,13 +99,15 @@ public class BoardController {
     public Map<String, Object> updateTodoStatus(@AuthenticationPrincipal OAuth2User principal,
                                                 @PathVariable int todoId,
                                                 @RequestBody Map<String, Object> param) {
-        String userId = principal.getAttribute("sub").toString();
-        String provider = principal.getAttribute("provider").toString();
 
-        int newStatus = (Integer) param.get("completedYn") == 1 ? 0 : 1;
+        String provider   = (String) principal.getAttributes().get("provider");
+        String providerId = (String) principal.getAttributes().get("providerId");
+        String userId     = provider + "_" + providerId;
+
+        int newStatus = ((Integer) param.get("completedYn") == 1) ? 0 : 1;
 
         Map<String, Object> param2 = Map.of(
-                "userId", provider + "_" + userId,
+                "userId", userId,
                 "todoId", todoId,
                 "completed_yn", newStatus
         );
@@ -103,15 +117,18 @@ public class BoardController {
     @DeleteMapping("/todos/{todoId}")
     public Map<String, Object> deleteTodo(@AuthenticationPrincipal OAuth2User principal,
                                           @PathVariable int todoId) {
-        String userId = principal.getAttribute("sub").toString();
-        String provider = principal.getAttribute("provider").toString();
+
+        String provider   = (String) principal.getAttributes().get("provider");
+        String providerId = (String) principal.getAttributes().get("providerId");
+        String userId     = provider + "_" + providerId;
 
         Map<String, Object> param = Map.of(
-                "userId", provider + "_" + userId,
+                "userId", userId,
                 "todoId", todoId
         );
 
         return boardService.deleteTodo(param);
     }
+
 
 }

@@ -19,7 +19,8 @@ public class AuthController {
     @GetMapping("/me")
     public Map<String, Object> me(@AuthenticationPrincipal OAuth2User principal) {
         String provider = (String) principal.getAttributes().get("provider");
-        String providerId = principal.getAttribute("sub");
+        //String providerId = principal.getAttribute("sub");
+        String providerId = (String) principal.getAttributes().get("providerId");
 
         return authService.getCurrentUser(provider, providerId);
     }
